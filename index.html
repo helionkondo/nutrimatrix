@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriMatrix Pro AI — Enterprise Dietary Parser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono-input { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                </div>
+                <div>
+                    <span class="text-base font-bold text-white tracking-tight">NutriMatrix<span class="text-indigo-400 font-medium text-xs ml-1 px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">PRO</span></span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 text-xs text-slate-400">
+                <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Engine Live</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Topline Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT COLUMN: Data Entry & Analysis Workstation -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
+                    <div class="mb-4">
+                        <h2 class="text-sm font-semibold text-white tracking-wide uppercase">Dietary Matrix Workspace</h2>
+                        <p class="text-xs text-slate-400 mt-1">Accepts syntax rules matching weights (<code class="text-indigo-300">200g salmon</code>) or explicit total units (<code class="text-indigo-300">2 egg</code>).</p>
+                    </div>
+                    
+                    <div class="relative">
+                        <textarea id="mealInput" rows="7" 
+                            class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-sm mono-input text-indigo-200 placeholder-slate-500 transition-all shadow-inner" 
+                            placeholder="Shkruaj ushqimet ne anglisht duke i ndare ne rreshta psh...&#10;150g chicken breast&#10;200g sweet potato&#10;1 avocado&#10;30g almond"></textarea>
+                    </div>
+                    
+                    <button id="analyzeBtn" class="mt-4 w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium py-3 px-4 rounded-xl transition-all text-sm shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 flex items-center justify-center space-x-2 active:scale-[0.99]">
+                        <span>Execute Matrix Analysis</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Database Live Reference Mini-Widget -->
+                <div class="bg-slate-800/30 border border-slate-800 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Indexed Database Directory</h3>
+                        <input id="dbSearch" type="text" placeholder="Filter dictionary keys..." class="bg-slate-900 border border-slate-700 rounded-lg text-[11px] px-2.5 py-1 text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <div class="max-h-44 overflow-y-auto border border-slate-700/40 rounded-xl bg-slate-900/50 text-[11px] text-slate-400 scrollbar-thin scrollbar-thumb-slate-700">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 bg-slate-900 sticky top-0 text-slate-300">
+                                    <th class="p-2">Food / Unit Key</th>
+                                    <th class="p-2 text-right">Carb</th>
+                                    <th class="p-2 text-right">Prot</th>
+                                    <th class="p-2 text-right">Fat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableBody">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Macro Dashboard & Plate Visualization Outputs -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Macro Metric Display Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- CARBS -->
+                    <div class="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5 shadow-md flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 h-1 bg-emerald-500 w-full"></div>
+                        <div>
+                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Carbohydrates</span>
+                            <p id="carbTotal" class="text-3xl font-bold text-white mt-1">0<span class="text-lg text-slate-400 font-normal ml-0.5">g</span></p>
+                        </div>
+                        <div class="mt-4 w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                            <div id="carbBar" class="bg-emerald-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- PROTEIN -->
+                    <div class="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5 shadow-md flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 h-1 bg-amber-500 w-full"></div>
+                        <div>
+                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Protein</span>
+                            <p id="proteinTotal" class="text-3xl font-bold text-white mt-1">0<span class="text-lg text-slate-400 font-normal ml-0.5">g</span></p>
+                        </div>
+                        <div class="mt-4 w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                            <div id="proteinBar" class="bg-amber-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- FAT -->
+                    <div class="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5 shadow-md flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 h-1 bg-rose-500 w-full"></div>
+                        <div>
+                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Lipids / Fat</span>
+                            <p id="fatTotal" class="text-3xl font-bold text-white mt-1">0<span class="text-lg text-slate-400 font-normal ml-0.5">g</span></p>
+                        </div>
+                        <div class="mt-4 w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                            <div id="fatBar" class="bg-rose-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualized Structural Output Grid -->
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-sm font-semibold text-white tracking-wide uppercase mb-4 flex items-center">
+                        <svg class="w-4 h-4 text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Automated Assembly Blueprint View
+                    </h3>
+                    <div id="visualGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div class="col-span-full border-2 border-dashed border-slate-700/60 rounded-xl p-8 text-center text-slate-500 italic text-xs">
+                            Awaiting execution array payload metrics to map structured visual cards...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // System Foods Database
+        const foodDatabase = {
+            // PROTEINS
+            chicken_breast: { carbs: 0, protein: 0.31, fat: 0.036, img: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=200" },
+            chicken_thigh: { carbs: 0, protein: 0.24, fat: 0.08, img: "https://images.unsplash.com/photo-1598515214211-89d3e73ae83b?w=200" },
+            beef_lean: { carbs: 0, protein: 0.26, fat: 0.15, img: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=200" },
+            steak: { carbs: 0, protein: 0.25, fat: 0.19, img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=200" },
+            ground_beef: { carbs: 0, protein: 0.24, fat: 0.17, img: "https://images.unsplash.com/photo-1588168333627-747610689688?w=200" },
+            salmon: { carbs: 0, protein: 0.22, fat: 0.13, img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200" },
+            tuna: { carbs: 0, protein: 0.26, fat: 0.01, img: "https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?w=200" },
+            shrimp: { carbs: 0, protein: 0.24, fat: 0.003, img: "https://images.unsplash.com/photo-1559742811-82410b451b9b?w=200" },
+            tofu: { carbs: 0.02, protein: 0.08, fat: 0.04, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200" },
+            // GRAINS & CARBS
+            oats: { carbs: 0.66, protein: 0.17, fat: 0.07, img: "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=200" },
+            white_rice: { carbs: 0.28, protein: 0.027, fat: 0.003, img: "https://images.unsplash.com/photo-1536304997881-a372c179924b?w=200" },
+            brown_rice: { carbs: 0.23, protein: 0.026, fat: 0.009, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
+            sweet_potato: { carbs: 0.20, protein: 0.016, fat: 0.001, img: "https://images.unsplash.com/photo-1590005354167-6da97870c913?w=200" },
+            potato: { carbs: 0.17, protein: 0.02, fat: 0.001, img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=200" },
+            pasta: { carbs: 0.31, protein: 0.05, fat: 0.01, img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200" },
+            whole_wheat_bread: { carbs: 0.41, protein: 0.13, fat: 0.04, img: "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=200" },
+            // FRUITS & VEGETABLES
+            apple: { carbs: 0.14, protein: 0.003, fat: 0.002, img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=200" },
+            banana: { carbs: 0.23, protein: 0.011, fat: 0.003, img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200" },
+            avocado: { carbs: 0.09, protein: 0.02, fat: 0.15, img: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=200" },
+            broccoli: { carbs: 0.07, protein: 0.028, fat: 0.004, img: "https://images.unsplash.com/photo-1453227588063-bb302b62f50b?w=200" },
+            spinach: { carbs: 0.036, protein: 0.029, fat: 0.004, img: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=200" },
+            almond: { carbs: 0.22, protein: 0.21, fat: 0.49, img: "https://images.unsplash.com/photo-1508817628294-5a453fa0b8fb?w=200" },
+            olive_oil: { carbs: 0, protein: 0, fat: 1.00, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200" },
+            // UNITS
+            egg_unit: { carbs: 0.6, protein: 6.3, fat: 5.0, img: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=200" },
+            banana_unit: { carbs: 27, protein: 1.3, fat: 0.4, img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200" },
+            apple_unit: { carbs: 25, protein: 0.5, fat: 0.3, img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=200" },
+            avocado_unit: { carbs: 12, protein: 3.0, fat: 22.0, img: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=200" }
+        };
+
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const mealInput = document.getElementById('mealInput');
+        const carbTotalDisplay = document.getElementById('carbTotal');
+        const proteinTotalDisplay = document.getElementById('proteinTotal');
+        const fatTotalDisplay = document.getElementById('fatTotal');
+        const visualGrid = document.getElementById('visualGrid');
+        
+        const carbBar = document.getElementById('carbBar');
+        const proteinBar = document.getElementById('proteinBar');
+        const fatBar = document.getElementById('fatBar');
+        const dbTableBody = document.getElementById('dbTableBody');
+        const dbSearch = document.getElementById('dbSearch');
+
+        // Dynamically build clean table tracking system dictionary data indexes
+        function populateDatabaseDirectory() {
+            let html = '';
+            Object.keys(foodDatabase).forEach(key => {
+                const item = foodDatabase[key];
+                const cleanName = key.replace('_unit', ' (unit)').replace(/_/g, ' ');
+                html += `<tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors" data-key="${key}">
+                    <td class="p-2 font-medium text-slate-300 capitalize">${cleanName}</td>
+                    <td class="p-2 text-right font-mono text-emerald-400">${item.carbs}</td>
+                    <td class="p-2 text-right font-mono text-amber-400">${item.protein}</td>
+                    <td class="p-2 text-right font-mono text-rose-400">${item.fat}</td>
+                </tr>`;
+            });
+            dbTableBody.innerHTML = html;
+        }
+
+        // Search/Filter matching key strings functionality
+        dbSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const rows = dbTableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const key = row.getAttribute('data-key').replace(/_/g, ' ');
+                if(key.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        analyzeBtn.addEventListener('click', () => {
+            const text = mealInput.value.trim();
+            if (!text) return;
+
+            let totalCarbs = 0, totalProtein = 0, totalFats = 0;
+            let gridHtml = '';
+            const lines = text.split('\n');
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                const weightMatch = line.match(/^(\d+)(?:g|oz|mg|ml|grams|ounces)?(?:\s+of)?\s+(.+)$/i);
+                const unitMatch = line.match(/^(\d+)\s+(.+)$/i);
+
+                if (weightMatch) {
+                    const weight = parseInt(weightMatch[1]);
+                    let rawFoodName = weightMatch[2].toLowerCase().trim().replace(/\s+/g, '_');
+                    let singularName = rawFoodName.replace(/s$/, ''); 
+
+                    let matchedKey = Object.keys(foodDatabase).find(key => 
+                        !key.endsWith('_unit') && (rawFoodName === key || singularName === key || key.includes(singularName))
+                    );
+
+                    if (matchedKey) {
+                        const food = foodDatabase[matchedKey];
+                        totalCarbs += food.carbs * weight;
+                        totalProtein += food.protein * weight;
+                        totalFats += food.fat * weight;
+
+                        const displayTitle = matchedKey.replace(/_/g, ' ');
+
+                        gridHtml += `
+                            <div class="group relative rounded-xl overflow-hidden border border-slate-700 bg-slate-800 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:border-slate-500 h-28">
+                                <img src="${food.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+                                <div class="absolute bottom-0 inset-x-0 p-3 text-left">
+                                    <p class="text-xs font-semibold text-white capitalize tracking-wide truncate">${displayTitle}</p>
+                                    <p class="text-[10px] text-indigo-300 font-mono mt-0.5">${weight} grams entry</p>
+                                </div>
+                            </div>`;
+                        return; 
+                    }
+                }
+
+                if (unitMatch) {
+                    const count = parseInt(unitMatch[1]);
+                    let rawFoodName = unitMatch[2].toLowerCase().trim().replace(/\s+/g, '_');
+                    let singularName = rawFoodName.replace(/s$/, ''); 
+
+                    let lookupUnitKey = Object.keys(foodDatabase).find(key => 
+                        key.endsWith('_unit') && (key === rawFoodName + '_unit' || key === singularName + '_unit')
+                    );
+
+                    if (lookupUnitKey) {
+                        const foodUnitData = foodDatabase[lookupUnitKey];
+                        totalCarbs += foodUnitData.carbs * count;
+                        totalProtein += foodUnitData.protein * count;
+                        totalFats += foodUnitData.fat * count;
+
+                        const displayTitle = lookupUnitKey.replace('_unit', '').replace(/_/g, ' ');
+
+                        gridHtml += `
+                            <div class="group relative rounded-xl overflow-hidden border border-slate-700 bg-slate-800 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:border-slate-500 h-28">
+                                <img src="${foodUnitData.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+                                <div class="absolute bottom-0 inset-x-0 p-3 text-left">
+                                    <p class="text-xs font-semibold text-white capitalize tracking-wide truncate">${displayTitle}</p>
+                                    <p class="text-[10px] text-indigo-300 font-mono mt-0.5">Quantity: x${count}</p>
+                                </div>
+                            </div>`;
+                    }
+                }
+            });
+
+            // Math Round display view updates
+            carbTotalDisplay.innerHTML = Math.round(totalCarbs) + '<span class="text-lg text-slate-400 font-normal ml-0.5">g</span>';
+            proteinTotalDisplay.innerHTML = Math.round(totalProtein) + '<span class="text-lg text-slate-400 font-normal ml-0.5">g</span>';
+            fatTotalDisplay.innerHTML = Math.round(totalFats) + '<span class="text-lg text-slate-400 font-normal ml-0.5">g</span>';
+            
+            // Dynamic width logic calculation for the professional dashboard metrics
+            const grandTotalMacros = totalCarbs + totalProtein + totalFats || 1;
+            carbBar.style.width = `${(totalCarbs / grandTotalMacros) * 100}%`;
+            proteinBar.style.width = `${(totalProtein / grandTotalMacros) * 100}%`;
+            fatBar.style.width = `${(totalFats / grandTotalMacros) * 100}%`;
+
+            visualGrid.innerHTML = gridHtml || `
+                <div class="col-span-full border border-amber-500/20 rounded-xl p-6 text-center text-amber-400/80 bg-amber-500/5 text-xs">
+                    No structural matches detected. Please verify string syntax naming against the Indexed Directory keys.
+                </div>`;
+        });
+
+        // Init Lifecycle hook compilation
+        populateDatabaseDirectory();
+    </script>
+</body>
+</html>
